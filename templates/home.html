@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<br>
+<div class="d-flex justify-content-end m-3">
+  <div class="m-2" style="display: block;"><strong >{{user.username}} </strong>  welcome to our site </div>
+
+
+
+
+  <form class="m-1" action="{% url 'logout' %}" method="post" style="display: inline-block;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" >Logout</button>
+  </form>
+  <form class="m-1" action="{% url 'password_change' %}" method="post" style="display: inline-block;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" >Parolni o'zgartirish</button>
+  </form>
+  <form class="m-1" action="{% url 'password_reset' %}" method="post" style="display: inline-block;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" >Parolni tiklash</button>
+  </form>
+  <form class="m-1" action="{% url 'signup' %}" method="post" style="display: inline-block;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" >Registratsiya</button>
+  </form>
+  <form class="m-1" action="{% url 'realchat' %}" method="post" style="display: inline-block;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" >Real Chat</button>
+  </form>
+  <form class="m-1" action="{% url 'chat' room_name='example-room' %}" method="post" style="display: inline-block;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" >User chat</button>
+  </form>
+</div>
+{%else %}
+  <h1>Saytga kirmagansiz</h1>
+  <a href="{% url 'login' %}">Login</a>
+ 
+{% endif %}
+   
+
+{% endblock content %}

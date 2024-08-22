@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}
+Login
+
+{% endblock title %}
+{% block content %}
+<div class="container mt-2">
+    <div class="rov">
+        <div class="col-6 mx-auto">
+            <form method="post">
+                {%csrf_token %}
+                {{form.as_p}}
+                <button class="btn btn-primary  m-2" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
