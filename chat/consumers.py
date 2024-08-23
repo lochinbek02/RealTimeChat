@@ -21,10 +21,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 class ChatConsumerTwo(AsyncWebsocketConsumer):
+    
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
-
+        
+        # Room`ga qo‘shilish
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -33,6 +35,7 @@ class ChatConsumerTwo(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        # Room`dan chiqish
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -41,15 +44,11 @@ class ChatConsumerTwo(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        user = self.scope["user"]
+        
+        # Save the message to the database
+        await self.save_message(message)
 
-        # Xabarni saqlash
-        new_message = Message.objects.create(
-            user=user,
-            room_name=self.room_name,
-            content=message
-        )
-
+        # Room`dagi barcha foydalanuvchilarga xabar yuborish
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -58,9 +57,16 @@ class ChatConsumerTwo(AsyncWebsocketConsumer):
             }
         )
 
+    @database_sync_to_async
+    def save_message(self, message):
+        user = self.scope['user']  # Assuming the user is authenticated
+        Message.objects.create(user=user, room_name=self.room_name, content=message)
+
+    # Xabarni chat`ga jo'natish
     async def chat_message(self, event):
         message = event['message']
 
+        # WebSocket orqali xabar yuborish
         await self.send(text_data=json.dumps({
             'message': message
         }))
