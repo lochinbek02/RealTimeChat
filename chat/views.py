@@ -17,7 +17,7 @@ class HomeView(TemplateView):
     template_name='home.html'
 def chat_room(request, room_name):
     messages = Message.objects.filter(room_name=room_name).order_by('timestamp')
-    
+  
     return render(request, 'chat.html', {
         'room_name': room_name,
         'messages': messages
